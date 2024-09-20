@@ -1,0 +1,36 @@
+{
+  "name": "example-bot",
+  "module": "src/main.ts",
+  "main": "dist/main.js",
+  "type": "module",
+  "engineStrict": true,
+  "devDependencies": {
+    "@types/bun": "^1.1.8",
+    "@eslint/compat": "^1.1.1",
+    "@typescript-eslint/parser": "^8.4.0",
+    "prettier": "^3.3.3",
+    "discord-api-types": "^0.37.100",
+    "eslint": "^9.10.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.5.2"
+  },
+  "dependencies": {
+    "@types/node": "20",
+    "discord.js": "^14.16.1",
+    "dotenv": "^16.4.5",
+    "mocha": "^10.7.3"
+  },
+  "scripts": {
+    "start": "rm -rf dist && tsc && bun .",
+    "build": "rm -rf dist && tsc",
+    "rmcache": "rm -rf node_modules/.cache && rm -rf dist",
+    "lint": "eslint",
+    "watch": "tsc -w",
+    "buildWatch": "tsc && tsc -w",
+    "debug": "bun --inspect --hot .",
+    "fmt": "bun x prettier --write .",
+    "test": "bun x mocha",
+    "gpg:agent": "gpg-connect-agent reloadagent /bye"
+  }
+}
