@@ -1,0 +1,9 @@
+*.log
+node_modules/
+.env*
+dist/
+*.ts_
+*._ts
+db/
+backup/
+data/
