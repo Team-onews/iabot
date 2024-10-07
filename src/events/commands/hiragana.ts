@@ -74,7 +74,7 @@ export const command: Command = {
       let r = await result.text();
       if (reversed) {
         r = [
-          `\`\`\`${r.replace('\\', '\\\\').replace('`', '\\`')}\`\`\``,
+          `\`\`\`${r.replace(/\\/g, '\\\\').replace(/`/g, '\\`')}\`\`\``,
           '-# :warning: 数字、特殊文字の逆変換はサポート対象外です。',
         ].join('\n');
       }
@@ -85,3 +85,4 @@ export const command: Command = {
     }
   },
 };
+

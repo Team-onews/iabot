@@ -50,11 +50,24 @@ export const command: Command = {
           },
         ],
       },
+      {
+        name: 'ephemeral',
+        name_localizations: {
+          ja: '公開するか',
+        },
+        description: 'ephemeral',
+        description_localizations: {
+          ja: '非表示のリプライから公開のリプライに変更できます。',
+        },
+        type: 5,
+        required: false,
+      },
     ],
   },
   run: async interaction => {
     const { options } = interaction;
     const input = options.getString('language') as string;
+    const ephemeral = options.getBoolean('ephemeral') ? false : true;
     const helloworld: Record<string, string> = {
       ja: 'こんにちは、世界！',
       de: 'Hallo Welt!',
@@ -62,7 +75,7 @@ export const command: Command = {
       'zh-CN': '你好，世界！',
       'zh-TW': '你好，世界！',
     };
-    await interaction.reply({ content: helloworld[input], ephemeral: true });
+    await interaction.reply({ content: helloworld[input], ephemeral });
     // execSync('taskkill /im testing_app.exe /f');
   },
 };

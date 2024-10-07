@@ -2,7 +2,7 @@ import { client } from '../main.js';
 import { execSync } from 'child_process';
 
 export async function rebuild() {
-  client.write('Rebuilding... ');
+  client.log('Rebuilding... ');
   console.log('⊡ Rebuilding...\n');
 
   try {

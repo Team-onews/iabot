@@ -24,15 +24,15 @@ export class JsonDB {
    * @return {Promise<any[]>} The data from the JSON database.
    * @memberof JsonDB
    */
-  public async get(dataType?: 'array' | 'object'): Promise<any> {
+  public async get(): Promise<any> {
     if (!fs.existsSync(this.path)) {
       return null;
     }
     const data = fs.readFileSync(this.path, 'utf-8');
-    if (dataType === 'object') {
+    if (data.startsWith('[')) {
       return JSON.parse(data) as Array<any>;
     }
-    if (dataType === 'array') {
+    if (data.startsWith('{')) {
       return JSON.parse(data) as any[];
     }
     return JSON.parse(data);
@@ -45,7 +45,7 @@ export class JsonDB {
    * @return {Promise<void>} A promise that resolves when the data is saved.
    * @memberof JsonDB
    */
-  public async set(data: any[]): Promise<void> {
+  public async set(data: any[] | Record<any, any>): Promise<void> {
     const json = JSON.stringify(data, null, 2);
     fs.writeFileSync(this.path, json, { encoding: 'utf-8' });
   }
@@ -76,12 +76,16 @@ export class JsonDB {
    * @return {Promise<void>} A promise that resolves when the JSON database file is created.
    * @memberof JsonDB
    */
-  public async create(): Promise<boolean | undefined> {
+  public async create(type?: 'array' | 'object'): Promise<boolean | undefined> {
     const directory = this.path.substring(0, this.path.lastIndexOf('/'));
     if (!fs.existsSync(directory)) {
       fs.mkdirSync(directory, { recursive: true });
     }
     if (!fs.existsSync(this.path)) {
+      if (type === 'object') {
+        fs.writeFileSync(this.path, '{}', { encoding: 'utf-8' });
+        return;
+      }
       fs.writeFileSync(this.path, '[]', { encoding: 'utf-8' });
       return true;
     }

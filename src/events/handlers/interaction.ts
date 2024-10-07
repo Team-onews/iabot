@@ -19,11 +19,16 @@ export async function interaction(interaction: Interaction, client: Client) {
   const { slashCommands, buttons } = client;
   if (interaction.isChatInputCommand()) {
     try {
+      if (interaction.replied) {
+        console.error('Already replied');
+        return;
+      }
+
       chatInputCommand(interaction, slashCommands);
     } catch (e) {
       if (interaction.replied)
         await interaction.editReply({
-          content: '[ERR_CATCH] エラーが発生しました。詳細はログを確認してください。',
+          content: '[ERR] 既にインタラクションに返信済みです',
         });
       else
         await interaction.reply({
@@ -173,6 +178,10 @@ async function button(interaction: ButtonInteraction, buttons: Collection<string
   const button = buttons.get(interaction.customId);
   if (!button) return;
   try {
+    if (interaction.replied) {
+      console.error('Already replied');
+      return;
+    }
     log(interaction);
     await button.run(interaction, client);
   } catch (e) {
@@ -189,9 +198,9 @@ async function log(interaction: Interaction) {
     interaction.isChatInputCommand() &&
     i14a.antiSpam.slashCommands.includes(interaction.commandName)
   ) {
-    client.write(`/${interaction.commandName}`, username, 'slashCommand');
+    client.log(`/${interaction.commandName}`, username, 'slashCommand');
   }
   if (interaction.isButton() && i14a.antiSpam.buttons.includes(interaction.customId)) {
-    client.write(`${interaction.customId}`, username, 'button');
+    client.log(`${interaction.customId}`, username, 'button');
   }
 }

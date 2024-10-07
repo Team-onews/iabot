@@ -18,7 +18,7 @@ export const Command: messageCommand = {
       }
     } catch (error) {
       message.reply('指定されたユーザーは存在しません。');
-      client.write('Error: ' + error, 'error');
+      client.log('Error: ' + error, 'error');
       throw new Error(`${error}`);
     }
   },

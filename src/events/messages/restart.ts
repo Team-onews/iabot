@@ -15,7 +15,7 @@ export const Command: messageCommand = {
       restart();
     } else {
       message.reply("**Hey!** Sorry, but you don't have required permission.");
-      await client.write('No permission', 'perm', 'permissionError');
+      await client.log('No permission', 'perm', 'permissionError');
       return;
     }
   },

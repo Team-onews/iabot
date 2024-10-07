@@ -13,7 +13,6 @@ export async function create(message: M, client: C) {
   const { author, content } = message;
   if (author.bot || content.length >= 500) return;
   if (await checkPerms(author.username, author.id, 'ignore')) return;
-  if (await deleteBannedMessage(message, client)) return;
   if (await zatsu(message)) return;
   if (!content.startsWith(i14a.prefix)) return;
   const args = content.slice(i14a.prefix.length).trim().split(/ +/);
@@ -28,17 +27,6 @@ async function execute(C: C, M: M, A: string[]) {
     return;
   }
   cm.run(M, A, C);
-}
-
-async function deleteBannedMessage(m: M, c: C): Promise<boolean> {
-  for (const w of i14a.env.bannedWord) {
-    if (m.content.match(w)) {
-      c.write(`Detected banned message: ${w}`);
-      await m.delete().catch(console.log);
-      return true;
-    }
-  }
-  return false;
 }
 
 async function zatsu(m: M): Promise<boolean> {

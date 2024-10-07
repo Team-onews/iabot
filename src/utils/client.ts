@@ -33,15 +33,41 @@ export class Client extends Discord {
   }
 
   public async init() {
-    if (!fs.existsSync('./logs')) fs.mkdirSync('./logs');
-    if (!fs.existsSync('./logs/errors')) fs.mkdirSync('./logs/errors');
+    let directories = [
+      './data',
+      './data/tmp',
+      './db',
+      './db/characters',
+      './db/inventory',
+      './db/json',
+      './logs',
+      './logs/errors',
+      './logs/errors/silent',
+      './logs/gemini',
+    ];
+
+    for (const dir of directories) {
+      await this.createFile(dir);
+    }
+
+    fs.readdirSync('./data/tmp').forEach(file => {
+      fs.unlinkSync(`./data/tmp/${file}`);
+    });
 
     if (!fs.existsSync('./dist'))
       throw new Error('Please run `npm run build` first. Bun is not supported.');
 
-    await Promise.all([this._applyCommand(), this._getTextCommands(), this._getButtons()]);
+    await Promise.all([
+      this._applyCommand(),
+      this._getTextCommands(),
+      this._getButtons(),
+      this._safeExit(),
+    ]);
     await this._registerEvents();
     await this.login(i14a.env.token);
+
+    // clear memory
+    directories = [];
   }
 
   private async _registerEvents() {
@@ -52,7 +78,7 @@ export class Client extends Discord {
   }
 
   private async _getCommands() {
-    const files = fs
+    let files = fs
       .readdirSync(`${i14a.env.dist}/events/commands`, 'utf-8')
       .filter(file => file.endsWith('.js'));
 
@@ -60,10 +86,11 @@ export class Client extends Discord {
       const { command: cmd } = await import(`../events/commands/${file}`);
       this.slashCommands.set(cmd.data.name, cmd);
     }
+    files = [];
   }
 
   private async _getTextCommands() {
-    const files = fs
+    let files = fs
       .readdirSync(`${i14a.env.dist}/events/messages`, 'utf-8')
       .filter(file => file.endsWith('.js'));
 
@@ -71,10 +98,12 @@ export class Client extends Discord {
       const { Command: cmd } = await import(`../events/messages/${file}`);
       this.textCommands.set(file.replace('.js', ''), cmd);
     }
+
+    files = [];
   }
 
   private async _getButtons() {
-    const files = fs
+    let files = fs
       .readdirSync(`${i14a.env.dist}/events/buttons`, 'utf-8')
       .filter(file => file.endsWith('.js'));
 
@@ -82,6 +111,8 @@ export class Client extends Discord {
       const { Button: btn } = await import(`../events/buttons/${file}`);
       this.buttons.set(file.replace('.js', ''), btn);
     }
+
+    files = [];
   }
 
   private async _applyCommand() {
@@ -95,6 +126,22 @@ export class Client extends Discord {
       .catch(this.error);
   }
 
+  private async _safeExit() {
+    ['SIGINT', 'SIGTERM', 'SIGKILL', 'exit', 'SIGSTOP'].forEach(sig => {
+      process.on(sig, () => {
+        if (this.user) {
+          this.destroy();
+          try {
+            process.kill(0);
+          } catch {}
+        }
+        try {
+          process.kill(1);
+        } catch {}
+      });
+    });
+  }
+
   public async updateCommands() {
     for (const cmd of this.slashCommands.values()) {
       await this.slashCommands.delete(cmd.data.name);
@@ -104,31 +151,27 @@ export class Client extends Discord {
   }
 
   public async error(e: any) {
-    console.error(e);
     const now = new Date();
     const fn = `errors/${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}.log`;
-    console.error(
-      [
-        '============================\n',
-        '[ error ] An error occurred.',
-        'Error is written in: ',
-        fn,
-        '\n============================',
-      ].join('\n')
-    );
-    write(String(e), 'error', fn);
+    log(String(e), 'error', fn);
   }
 
-  public async sendAndDel(m: Message, text: string) {
+  public async sendAndDel(m: Message, text: string, time?: number) {
     const r = await m.reply(text);
     setTimeout(() => {
       r.delete().catch(this.error);
       m.delete().catch(this.error);
-    }, 5000);
+    }, time ?? 5000);
   }
 
-  public write(message: string, level?: string, logfile?: string) {
-    write(message, level, logfile);
+  public log(message: string, level?: string, logfile?: string) {
+    log(message, level, logfile);
+  }
+
+  public createFile(filePath: string) {
+    if (!fs.existsSync(filePath)) {
+      fs.mkdirSync(filePath, { recursive: true });
+    }
   }
 }
 
@@ -149,11 +192,12 @@ function getLogFileName(logfile?: string): string {
   return fn;
 }
 
-export async function write(message: string, level?: string, logfile?: string) {
+export async function log(message: string, level?: string, logfile?: string) {
   const fn = getLogFileName(logfile);
   const now = new Date().toLocaleString();
   const milliseconds = new Date().getMilliseconds();
   const output = `[ ${now}:${milliseconds} ] [ ${level ?? 'info'} ] ${message}\n`;
+  console.log(`[update] ${level ?? 'info'}::${now}`);
   if (!fs.existsSync('./logs')) fs.mkdirSync('./logs');
   if (!fs.existsSync(fn)) {
     fs.writeFileSync(fn, output, 'utf8');

@@ -33,7 +33,7 @@ export const Command: messageCommand = {
     console.log('⊡ Clearing...');
     Promise.all([
       console.clear(),
-      client.write(`${author.username} cleared console logs.`),
+      client.log(`${author.username} cleared console logs.`),
       sendDelete(message, 'Console logs are cleared'),
     ]);
   },

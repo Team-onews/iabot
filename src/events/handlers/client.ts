@@ -1,5 +1,3 @@
-//todo: display user install count
-
 /* types */
 import { Client } from '../../utils/client.js';
 
@@ -16,26 +14,39 @@ export async function ready(client: Client) {
   setInterval(() => setRPC(client), 40000);
 
   const r = [
-    '⊡ Client is now ready!',
-    ` ⊳ Logged in as ${client.user.tag}!`,
-    ` ⊳ ID: ${client.user.id}`,
-    ` ⊳ Version: ${version}`,
+    `⊡ Client(${version}) is now ready!`,
+    ` ⊳ Logged in as ${client.user.tag} (${client.user.id})!`,
   ];
-  const { guilds, slashCommands, textCommands, buttons } = client;
 
+  const { slashCommands, textCommands, buttons } = client;
+  const { guilds, users } = await getInstallCount(client);
   const cmdTypes = {
     slashCommands,
     textCommands,
     buttons,
   };
-
   Object.entries(cmdTypes).forEach(([K, V]) => {
     if (V.size > 0) {
       r.push(` ⊳ Loaded ${V.size} ${K}`);
     }
   });
-
-  if (guilds.cache.size > 0) r.push(` ⊳ ${guilds.cache.size} server(s)`);
+  if (guilds > 0) r.push(` ⊳ ${guilds} server(s)`);
+  if (users > 0) r.push(` ⊳ ${users} user(s)`);
 
   console.info(r.join('\n') + '\n');
+}
+
+async function getInstallCount(client: Client): Promise<{ users: number; guilds: number }> {
+  const response = await fetch('https://discord.com/api/v10/applications/@me', {
+    headers: {
+      Authorization: `Bot ${client.i14a.env.token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  const json = await response.json();
+
+  return {
+    users: json.approximate_user_install_count,
+    guilds: json.approximate_guild_count,
+  };
 }
