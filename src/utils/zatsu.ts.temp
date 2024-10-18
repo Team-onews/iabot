@@ -1,0 +1,22 @@
+import { Message } from 'discord.js';
+import { i14a } from '../configs/i14a.js';
+import { client } from '../main.js';
+
+export async function 雑なファンクション(m: Message): Promise<boolean> {
+  if (await deleteBannedMessage(m)) return true;
+  return false;
+}
+
+async function deleteBannedMessage(m: Message): Promise<boolean> {
+  for (const w of i14a.env.bannedWord) {
+    if (m.content.match(w)) {
+      client.log(`Detected banned message: ${w}`);
+      await m.delete().catch(e => {
+        console.error(e);
+        return false;
+      });
+      return true;
+    }
+  }
+  return false;
+}

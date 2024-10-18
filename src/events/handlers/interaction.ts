@@ -13,6 +13,7 @@ import { client } from '../../main.js';
 import { i14a } from '../../configs/i14a.js';
 import { Client } from '../../utils/client.js';
 import { errorTypes } from '../../configs/errorTypes.js';
+import { Command } from '../../types/index.js';
 
 /* main */
 export async function interaction(interaction: Interaction, client: Client) {
@@ -26,10 +27,7 @@ export async function interaction(interaction: Interaction, client: Client) {
 
       chatInputCommand(interaction, slashCommands);
     } catch (e) {
-      if (interaction.replied)
-        await interaction.editReply({
-          content: '[ERR] 既にインタラクションに返信済みです',
-        });
+      if (interaction.replied) console.error('[ERR] 既にインタラクションに返信済みです');
       else
         await interaction.reply({
           content:
@@ -158,7 +156,7 @@ async function chatInputCommand(
   slashCommands: Collection<string, any>
 ) {
   const { commandName } = interaction;
-  const command = slashCommands.get(commandName);
+  const command = slashCommands.get(commandName) as Command;
   if (!command) {
     await interaction.reply({
       content: '[ERR_NOT_FOUND] コマンドが見つかりませんでした。',
@@ -166,12 +164,8 @@ async function chatInputCommand(
     });
     return;
   }
-  try {
-    log(interaction);
-    await command.run(interaction, client);
-  } catch (e) {
-    console.error(e);
-  }
+  log(interaction);
+  command.run(interaction, client).catch(client.error);
 }
 
 async function button(interaction: ButtonInteraction, buttons: Collection<string, any>) {

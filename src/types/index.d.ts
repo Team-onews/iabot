@@ -61,17 +61,17 @@ export interface SlashCommandData {
 }
 
 export interface ButtonInteraction {
-  run: (interaction: ButtonInteraction, client: I14AClient) => Promise<void> | void;
+  run: (interaction: ButtonInteraction, client: I14AClient) => Promise<void>;
 }
 
 export interface Command {
   data: APIApplicationCommand;
-  run: (interaction: ChatInputCommandInteraction, client: I14AClient) => any;
+  run: (interaction: ChatInputCommandInteraction, client: I14AClient) => Promise<void>;
 }
 
 export interface messageCommand {
   name?: string;
-  run: (message: Message, args: string[], client: I14AClient) => any;
+  run: (message: Message, args: string[], client: I14AClient) => Promise<void>;
 }
 
 export interface Embed extends Embed {

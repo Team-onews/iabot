@@ -17,13 +17,13 @@ function getCommandData() {
     options: [
       {
         name: 'random',
-        description: Math.random().toString(),
+        description: Math.floor(Math.random() * 1000).toString(),
         type: 3,
-        required: true,
+        required: false,
         choices: [
           {
             name: 'random_cache',
-            value: Math.random().toString(),
+            value: Math.floor(Math.random() * 1000).toString(),
           },
         ],
       },

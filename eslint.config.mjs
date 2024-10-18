@@ -27,6 +27,12 @@ export default [
       'no-debugger': 'error',
       'no-tabs': 'error',
       'no-unused-vars': 'warn',
+      'no-unused-expressions': 'error',
+      'no-unreachable-loop': 'error',
+      'no-unreachable': 'error',
+      'no-unsafe-negation': 'error',
+      'no-unused-labels': 'error',
+      'no-async-promise-executor': 'error',
       strict: 'error',
       'no-multiple-empty-lines': [
         'error',

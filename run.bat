@@ -1,8 +1,7 @@
 @echo off
-title IABot
-:a
 setlocal
 pushd %~dp0
+:a
 node .
-endlocal
 goto a
+endlocal

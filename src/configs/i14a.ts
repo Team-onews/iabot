@@ -49,6 +49,7 @@ export const i14a = {
     gsi2: process.env.gsi2 ?? '',
     gemini_token: process.env.gemini_token ?? '',
     gemini_system_instruction: process.env.gemini_system_instruction ?? '',
+    osu_api_key: process.env.osu_api_key ?? '',
     bannedWord: bannedWords || [''],
     clientId: process.env.client_id,
   },

@@ -19,7 +19,7 @@ export async function ready(client: Client) {
   ];
 
   const { slashCommands, textCommands, buttons } = client;
-  const { guilds, users } = await getInstallCount(client);
+  const { guilds, users } = await getUserInstallCount(client);
   const cmdTypes = {
     slashCommands,
     textCommands,
@@ -36,7 +36,7 @@ export async function ready(client: Client) {
   console.info(r.join('\n') + '\n');
 }
 
-async function getInstallCount(client: Client): Promise<{ users: number; guilds: number }> {
+async function getUserInstallCount(client: Client): Promise<{ users: number; guilds: number }> {
   const response = await fetch('https://discord.com/api/v10/applications/@me', {
     headers: {
       Authorization: `Bot ${client.i14a.env.token}`,

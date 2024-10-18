@@ -43,6 +43,5 @@ export const Button: ButtonInteraction = {
         style: 2,
       });
     await interaction.update({ embeds: [embed], components: [components] });
-    1;
   },
 };

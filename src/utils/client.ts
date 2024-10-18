@@ -153,7 +153,7 @@ export class Client extends Discord {
   public async error(e: any) {
     const now = new Date();
     const fn = `errors/${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}.log`;
-    log(String(e), 'error', fn);
+    log(e, 'error', fn);
   }
 
   public async sendAndDel(m: Message, text: string, time?: number) {
@@ -192,12 +192,14 @@ function getLogFileName(logfile?: string): string {
   return fn;
 }
 
-export async function log(message: string, level?: string, logfile?: string) {
+export async function log(message: any, level?: string, logfile?: string) {
   const fn = getLogFileName(logfile);
   const now = new Date().toLocaleString();
   const milliseconds = new Date().getMilliseconds();
   const output = `[ ${now}:${milliseconds} ] [ ${level ?? 'info'} ] ${message}\n`;
-  console.log(`[update] ${level ?? 'info'}::${now}`);
+  if (level === 'error') {
+    console.error(message);
+  } else console.log(`[update] ${level ?? 'info'}::${now}`);
   if (!fs.existsSync('./logs')) fs.mkdirSync('./logs');
   if (!fs.existsSync(fn)) {
     fs.writeFileSync(fn, output, 'utf8');

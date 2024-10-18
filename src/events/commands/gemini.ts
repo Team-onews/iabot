@@ -64,6 +64,43 @@ export const command: Command = {
     const proxy = interaction.options.getBoolean('proxy');
     const ephemeral = interaction.options.getBoolean('ephemeral') ?? false;
 
+    const ngWord = [
+      'プロンプト',
+      'prompt',
+      'ぷろんぷと',
+      'ﾌﾟﾛﾝﾌﾟﾄ',
+      'pronpt',
+      'puronputo',
+      'puronnputo',
+      '指示',
+      '生成して',
+      'generate',
+      'internal',
+      'error',
+      'エラー',
+      '内部',
+      '情報',
+      'private',
+      '非公開',
+      '秘密',
+      '特別',
+      '合言葉',
+      'あいことば',
+      '死ね',
+      'nigger',
+    ];
+    if (ngWord.includes(prompt.toLowerCase())) {
+      await interaction.reply({
+        embeds: [
+          {
+            description: '**ERROR** Internal error',
+          },
+        ],
+        ephemeral: true,
+      });
+      return;
+    }
+
     await interaction.reply({
       embeds: [
         {
