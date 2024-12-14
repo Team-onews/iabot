@@ -11,21 +11,22 @@ export const Command: messageCommand = {
     const command = args.slice(1).join(' ');
     console.log(`(iabot) ${process.cwd()}> ${command}`);
     exec(command, (error, stdout, stderr) => {
-      if (error) {
+      if (error && error.message.length > 0) {
         reply.edit(`\`\`\`bash\n${error}\n\`\`\``);
         return;
       }
-      if (stderr) {
+      if (stderr && stderr.length > 0) {
         reply.edit(`\`\`\`bash\n${stderr}\n\`\`\``);
         return;
       }
       console.log(stdout + '\n');
-      if (stdout.length > 1950) {
+      if (stdout.length > 1950 && stdout.length > 0) {
         reply.edit(
           `\`\`\`${type() === 'Windows_NT' ? 'bat' : 'bash'}\n${stdout.slice(0, 1950)}\n\`\`\`\n${stdout.length}bytes`
         );
         return;
       }
+      if (stdout.length! > 0) return reply.edit('Empty output');
       reply.edit(`\`\`\`${type() === 'Windows_NT' ? 'bat' : 'bash'}\n${stdout}\n\`\`\``);
     });
   },

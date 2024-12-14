@@ -5,6 +5,8 @@ db/
 backup/
 data/
 src/utils/zatsu.ts
+iabot*
+.AddCompLib/
 
 # Logs
 logs

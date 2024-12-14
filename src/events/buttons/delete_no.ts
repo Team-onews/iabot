@@ -14,6 +14,7 @@ export const Button: ButtonInteraction = {
       content: '操作は取り消されました。',
       embeds: [
         {
+          color: 0xff0000,
           title: '操作は取り消されました。',
           footer: { text: `${interaction.message.embeds[0].footer?.text}` },
         },

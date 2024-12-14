@@ -4,19 +4,24 @@ import { Client } from '../../utils/client.js';
 /* modules */
 import { i14a } from '../../configs/i14a.js';
 import { setRPC } from '../../utils/utilities.js';
-
-/* init */
-const { version } = i14a;
+import startWebUIServer from '../../utils/webui.js';
 
 /* main */
 export async function ready(client: Client) {
+  startWebUIServer();
   setRPC(client);
   setInterval(() => setRPC(client), 40000);
 
+  console.info((await generateMessage(client, i14a.webui.port)).join('\n') + '\n');
+}
+
+async function generateMessage(client: Client, port?: number) {
   const r = [
-    `⊡ Client(${version}) is now ready!`,
+    `⊡ Client(${i14a.version}) is now ready!`,
     ` ⊳ Logged in as ${client.user.tag} (${client.user.id})!`,
+    ` ⊳ At ${new Date().toLocaleString()}`,
   ];
+  if (port) r.push(` ⊳ WebUI Port: ${port}`);
 
   const { slashCommands, textCommands, buttons } = client;
   const { guilds, users } = await getUserInstallCount(client);
@@ -33,7 +38,7 @@ export async function ready(client: Client) {
   if (guilds > 0) r.push(` ⊳ ${guilds} server(s)`);
   if (users > 0) r.push(` ⊳ ${users} user(s)`);
 
-  console.info(r.join('\n') + '\n');
+  return r;
 }
 
 async function getUserInstallCount(client: Client): Promise<{ users: number; guilds: number }> {

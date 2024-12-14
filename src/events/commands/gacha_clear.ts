@@ -69,8 +69,8 @@ export const command: Command = {
     const { options } = interaction;
     if (!(await checkPerms(interaction.user.username, interaction.user.id, 'admin'))) return;
     const type = options.getString('type') || 'all';
-    const user = options.getUser('user');
-    if (!user || user.bot || user.system) {
+    const user = options.getUser('user', true);
+    if (user.bot || user.system) {
       interaction.reply({
         content: '[ERR_NO_SPECIFIED_USER] 有効なユーザーを選択してください',
         ephemeral: true,
@@ -81,6 +81,11 @@ export const command: Command = {
     await interaction.reply({
       embeds: [
         {
+          author: {
+            name: interaction.user.username,
+            icon_url: interaction.user.displayAvatarURL(),
+          },
+          color: 0xff0000,
           title: 'インベントリの消去を開始します。この操作は取り消せません。',
           description: [
             '本当に実行しますか?',

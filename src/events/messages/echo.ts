@@ -11,7 +11,8 @@ export const Command: messageCommand = {
       message.reply("**Hey!** Sorry, but you don't have required permission.");
       return;
     }
-    await message.reply(message.content.slice(i14a.prefix.length + 5));
+    if (!message.channel.isSendable()) return;
+    await message.channel.send(message.content.slice(i14a.prefix.length + 5));
     message.delete().catch(console.log);
   },
 };

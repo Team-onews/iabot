@@ -5,6 +5,7 @@ import {
   addInventoryItem,
   createGachaEmbed,
   getItemStackFromInventory,
+  getUserInventory,
   pullGacha,
   removeInventoryItem,
 } from '../../utils/gachaUtil.js';
@@ -71,7 +72,13 @@ export const command: Command = {
   run: async interaction => {
     const { user, options } = interaction;
     const ephemeral = options.getBoolean('ephemeral') ? true : false;
-    const _type = options.getString('type') as 'item' | 'character';
+    const _type = options.getString('type', true) as 'item' | 'character';
+    let isFirstPull = false;
+    const { inventory } = await getUserInventory(user.username, _type);
+    if (inventory.length == 0) {
+      isFirstPull = true;
+    }
+
     if (_type === 'character') {
       const tickets = await getItemStackFromInventory(user.username, 'ticket_character');
       if (!(tickets > 0)) {
@@ -118,6 +125,19 @@ export const command: Command = {
     }
     interaction.reply({
       ephemeral,
+      content: isFirstPull
+        ? [
+            '## 初めてガチャを引いた方への注意書き',
+            'このBotのガチャシステムは、IDや表示名ではなくユーザー名(※1)を使用してデータを保管しています。',
+            'もしユーザー名を変えてしまった場合はインベントリがすべてリセットされてしまいます(※2)。',
+            '元のデータを引き継びたい場合は、デベロッパーのDMかサポートサーバー(※3)にて手続きをお願いします。本人確認(※4)が取れ次第データを移行します。',
+            'データ削除などの依頼も可能です。',
+            '-# ※1 例えば、「username0001」。',
+            '-# ※2 元のユーザー名のデータ自体は引き続き保持されます。',
+            '-# ※3 /supportコマンドを使用するとリンクが表示されます。',
+            '-# ※4 この際に開発、運営陣は個人情報を聞いたりはしません。Discord上で本人だと証明できるものがあれば十分です。',
+          ].join('\n')
+        : undefined,
       components,
       embeds,
       flags: [4096],

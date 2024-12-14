@@ -13,7 +13,7 @@ export const command: Command = {
   },
   run: async interaction => {
     const start = Date.now();
-    let wsPing = interaction.client.ws.ping.toString() + 'ms';
+    let wsPing = `${interaction.client.ws.ping}ms`;
     if (wsPing === '-1ms') {
       wsPing = 'Calculating...';
     }
@@ -26,6 +26,7 @@ export const command: Command = {
             icon_url:
               'https://cdn.discordapp.com/emojis/1263268334804140113.webp?size=64&quality=lossless',
           },
+          color: 0x2f3136,
           description: [
             `**Client websocket ping**: ${wsPing}`,
             '**Interaction delay**: Calculating...',
@@ -42,6 +43,7 @@ export const command: Command = {
             icon_url:
               'https://cdn.discordapp.com/emojis/1263268334804140113.webp?size=64&quality=lossless',
           },
+          color: 0x2f3136,
           description: [
             `**Client websocket ping**: ${wsPing}`,
             `**Interaction delay**: ${(await interaction.fetchReply()).createdTimestamp - interaction.createdTimestamp}(${end - start})ms`,

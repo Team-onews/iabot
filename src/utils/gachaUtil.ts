@@ -21,20 +21,13 @@ export async function pullGacha(type: 'item' | 'character') {
       itemType = type;
       break;
   }
-
-  let sum = 0;
-  const weightedList = itemType.map(item => {
-    sum += item.weight;
-    return {
-      item,
-      weight: sum,
-    };
-  });
-
-  const randomNum = Math.random() * sum;
-  for (const item of weightedList) {
-    if (randomNum <= item.weight) {
-      return item.item;
+  const totalWeight = itemType.reduce((sum, item) => sum + item.weight, 0);
+  const randomNum = Math.random() * totalWeight;
+  let currentWeight = 0;
+  for (const item of itemType) {
+    currentWeight += item.weight;
+    if (randomNum <= currentWeight) {
+      return item;
     }
   }
 }
@@ -105,10 +98,15 @@ export async function createBaseGachaEmbed(item: GachaItem, user: User) {
       value: _translation.rarity[item.rarity.rarity],
       inline: true,
     });
-  } else if (item.rarity.type === 'sol' || item.rarity.type === 'other') {
+  } else if (
+    item.rarity.type === 'sol' ||
+    item.rarity.type === 'other' ||
+    item.rarity.type === 'gakumasu' ||
+    item.rarity.type === 'othello'
+  ) {
     embed.fields?.push({
       name: 'レアリティ',
-      value: item.rarity.rarity,
+      value: `${item.rarity.rarity}`,
       inline: true,
     });
   }
@@ -153,10 +151,9 @@ export async function createGachaEmbed(item: GachaItem, user: User, type: 'item'
       inline: false,
     });
   } else {
-    const _type = type === 'item' ? 'アイテム' : 'キャラクター';
     embed.fields?.push({
       name: '🥳 おめでとうございます！',
-      value: `あなたは初めてこの${_type}を入手しました！`,
+      value: `あなたは初めてこの${getItemOrCharacter(type)}を入手しました！`,
       inline: false,
     });
   }
@@ -175,10 +172,14 @@ export async function createItemEmbed(item: GachaItem, user: User) {
   } else {
     embed.fields?.push({
       name: '所持数',
-      value: 'あなたはまだこのアイテムを所持していません',
+      value: `あなたはまだこの${getItemOrCharacter(item.type)}を所持していません`,
     });
   }
   return embed;
+}
+
+export function getItemOrCharacter(type: 'item' | 'character') {
+  return type === 'item' ? 'アイテム' : 'キャラクター';
 }
 
 export async function createInventoryEmbed(user: User, type: 'item' | 'character', page?: number) {

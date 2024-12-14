@@ -25,6 +25,7 @@ export const Button: ButtonInteraction = {
       embeds: [
         {
           title: 'UNOのURL',
+          color: 0x00ff00,
           fields: [
             {
               name: 'URL',

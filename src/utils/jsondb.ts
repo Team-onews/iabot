@@ -15,6 +15,7 @@ export class JsonDB {
    * @memberof JsonDB
    */
   constructor(path?: string) {
+    if (!path?.endsWith('.json')) path += '.json';
     this.path = i14a.env.rootPath + '../../../db/' + path;
   }
 

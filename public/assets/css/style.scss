@@ -1,0 +1,132 @@
+html {
+  font-family: 'Roboto', sans-serif;
+}
+
+.mdui-title {
+  color: initial !important;
+  text-decoration: none !important;
+}
+
+.mettazasi {
+  margin-left: 12px;
+  color: #777;
+}
+
+.bold {
+  font-weight: bold !important;
+}
+
+.dialog-title {
+  text-align: center;
+  font-size: 24px;
+}
+
+p {
+  text-align: center;
+}
+
+mdui-icon {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+
+mdui-layout-main {
+  padding-top: 0px;
+  position: relative;
+  margin: 0 auto;
+  text-align: center;
+  max-width: 90%;
+  overflow-wrap: break-word;
+}
+
+mdui-navigation-bar {
+  max-width: 640px;
+  padding: 0 auto;
+  margin: 0 auto;
+}
+
+#dialog {
+  width: 80%;
+  max-width: 90%;
+  margin: 0 auto;
+
+  mdui-button {
+    margin: 2px;
+  }
+
+  #dialog_close {
+    width: calc(100% - 4px);
+    margin-top: 10px;
+  }
+  .discord_buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+#drawer {
+  h1 {
+    margin-top: 40px;
+    margin-left: 16px;
+  }
+
+  mdui-button {
+    vertical-align: text-bottom;
+    margin-left: 30px;
+    width: 60px;
+  }
+}
+
+.hidden {
+  visibility: hidden !important;
+}
+
+.main-container {
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+}
+
+@media screen and (max-width: 479px) {
+  mdui-dialog {
+    zoom: 0.8;
+  }
+  #screen_warning {
+    visibility: visible !important;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    background-color: #000;
+    padding: 100%;
+    width: 95%;
+    overflow: hidden !important;
+    font-size: calc(2vw + 2vh);
+    color: white;
+    z-index: 1000000;
+    text-align: center;
+    transform: translate(-50%, -50%);
+  }
+  #mdui-button {
+    zoom: 0.8;
+  }
+}
+
+@media screen and (min-width: 479px) {
+  #screen_warning {
+    visibility: hidden !important;
+    display: none !important;
+    width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+@media screen and (min-width: 720px) {
+  .main-container {
+    max-width: 720px;
+  }
+}

@@ -55,10 +55,13 @@ export const command: Command = {
   },
   run: async interaction => {
     const { options } = interaction,
-      input = options.getString('input') as string,
-      ephemeral = (options.getBoolean('ephemeral') as boolean) ?? false,
-      reversed = options.getBoolean('reversed') as boolean,
-      url = reversed ? 'https://hiragana2.i14a.workers.dev' : 'https://hiragana.i14a.workers.dev';
+      input = options.getString('input', true);
+    const ephemeral = options.getBoolean('ephemeral') ?? false;
+    const reversed = options.getBoolean('reversed') ?? false;
+    const url = reversed
+      ? 'https://hiragana2.i14a.workers.dev'
+      : 'https://hiragana.i14a.workers.dev';
+
     await interaction.reply({
       content: '<a:loading:1271076741749936179> apiの応答を待っています...',
       ephemeral,

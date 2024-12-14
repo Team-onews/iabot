@@ -45,21 +45,8 @@ export const command: Command = {
   run: async interaction => {
     const { options } = interaction;
     const ephemeral = options.getBoolean('ephemeral') ? false : true;
-    const errorType = options.get('error_type');
-    if (
-      !errorType ||
-      !errorType.value ||
-      errorType.value === 'null' ||
-      !(typeof errorType.value === 'string')
-    ) {
-      await interaction.reply({
-        ephemeral: true,
-        content: '[ERR_UNKNOWN_TYPE] Please specify an error.',
-      });
-      return;
-    }
-
-    const error = errorTypes.get(errorType.value);
+    const errorType = options.getString('error_type', true);
+    const error = errorTypes.get(errorType);
     if (!error) {
       await interaction.reply({
         ephemeral: true,
@@ -74,6 +61,7 @@ export const command: Command = {
           icon_url: interaction.user.displayAvatarURL(),
         },
         title: error.name,
+        color: 0xff0000,
         description: [`- ${error.description}`, `-# ID: ${error.id}`].join('\n'),
         fields: [],
       },

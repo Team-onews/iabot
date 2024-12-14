@@ -1,4 +1,4 @@
-forked from https://github.com/070ry/example-bot
+forked from https://github.com/i14a-dsc/example-bot
 
 # How to run on your computer
 

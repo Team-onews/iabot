@@ -10,15 +10,14 @@ export const command: Command = {
       {
         name: 'message',
         description: 'message',
-        type: 5,
+        type: 3,
+        required: false,
       },
     ],
   },
   run: async interaction => {
-    const message = interaction.options.getBoolean('message');
-    if (message) {
-      await interaction.reply({ content: 'test', ephemeral: true });
-      throw new Error('test error');
-    } else throw new Error('test error');
+    const message = interaction.options.getString('message');
+    await interaction.reply({ content: 'test', ephemeral: true });
+    throw new Error(message ?? 'test error');
   },
 };

@@ -11,6 +11,7 @@ export const Command: messageCommand = {
         embeds: [
           {
             title: 'Error',
+            color: 0xff0000,
             description: "Sorry, But you don't have required permission.",
             fields: [
               {

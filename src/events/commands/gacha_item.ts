@@ -49,16 +49,9 @@ export const command: Command = {
   run: async interaction => {
     const { options } = interaction;
     const ephemeral = options.getBoolean('ephemeral') ? false : true;
-    const item = options.get('item');
-    if (!item || item.value === 'null' || !item.value || !(typeof item.value === 'string')) {
-      await interaction.reply({
-        ephemeral: true,
-        content: '[ERR_NO_SPECIFIED_ITEM_TYPE] Please specify an item.',
-      });
-      return;
-    }
+    const item = options.getString('item', true);
 
-    const _item = await getGachaItem(item.value, 'item');
+    const _item = await getGachaItem(item, 'item');
     if (!_item) {
       await interaction.reply({ ephemeral: true, content: '[ERR_ITEM_NOT_FOUND] Item not found.' });
       return;

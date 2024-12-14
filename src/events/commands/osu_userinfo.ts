@@ -23,6 +23,7 @@ export const command: Command = {
           'en-US': 'Enter the osu! user name or ID.',
         },
         type: 3,
+        max_length: 15,
         required: true,
       },
       {
@@ -60,7 +61,7 @@ export const command: Command = {
   run: async (interaction, client) => {
     if (!client.user) return;
 
-    const user = interaction.options.getString('user') as string;
+    const user = interaction.options.getString('user', true);
     const mode = interaction.options.getInteger('mode') ?? 0;
     const ephemeral = interaction.options.getBoolean('ephemeral') ?? false;
 
@@ -68,6 +69,11 @@ export const command: Command = {
     await interaction.reply({
       embeds: [
         {
+          author: {
+            name: interaction.user.username,
+            icon_url: interaction.user.displayAvatarURL(),
+          },
+          color: 0x2f3136,
           description: 'osu!からの応答を待っています...',
         },
       ],
@@ -117,6 +123,7 @@ export const command: Command = {
       await interaction.editReply({
         embeds: [
           {
+            color: 0xff0000,
             description: 'どうやらエラーが発生したみたい',
           },
         ],

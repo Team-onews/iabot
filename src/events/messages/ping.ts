@@ -14,6 +14,7 @@ export const Command: messageCommand = {
       embeds: [
         {
           author,
+          color: 0x2f3136,
           description: [
             `**Client websocket ping**: ${client.ws.ping}ms`,
             '**message delay:** Calculating...',
@@ -27,6 +28,7 @@ export const Command: messageCommand = {
         embeds: [
           {
             author,
+            color: 0x2f3136,
             description: [
               `**Client websocket ping: ${client.ws.ping}ms**`,
               `**message delay: ${end - start}ms**`,

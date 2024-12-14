@@ -1,0 +1,155 @@
+<!doctype html>
+<html class="mdui-theme-auto" lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>IABot WebUI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/assets/css/mdui.css" />
+    <script src="/assets/js/mdui.js"></script>
+    <link href="/assets/css/material.css" rel="stylesheet" />
+    <script>
+      mdui.setColorScheme('#00FFFF');
+      mdui.loadLocale('ja-jp');
+      document.addEventListener('DOMContentLoaded', () => {
+        const message_send = document.querySelector('#message_send');
+        const restart = document.querySelector('#restart');
+
+        const more = document.querySelector('#more');
+        more.addEventListener('click', () => {
+          document.querySelector('#right_drawer').open = true;
+        });
+
+        restart.addEventListener('click', async () => {
+          mdui.snackbar({
+            message: 'Botを再起動します。',
+            closeable: true,
+          });
+          const res = await fetch(`/restart`, { method: 'POST' });
+          if (res.status !== 200 || (await res.json()).success === false) {
+            mdui.snackbar({
+              message: 'Botの再起動に失敗しました。',
+              closeable: true,
+            });
+            return;
+          }
+          mdui.snackbar({
+            message: 'Botを再起動しました。',
+            closeable: true,
+          });
+
+          setInterval(() => {
+            fetch('/status', { method: 'GET' }).then(r => {
+              if (r.status === 200 || r.ok) location.reload();
+            });
+          }, 3000);
+        });
+
+        message_send.addEventListener('click', async () => {
+          const channel_id = document.querySelector('#channel_id').value;
+          const message = document.querySelector('#message').value;
+
+          const snackbar = mdui.snackbar({ message: 'Sending...', closeable: true });
+
+          const response = await fetch('/api/sendMessage', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ channel_id, message }),
+          });
+
+          console.log(JSON.stringify({ channel_id, message }), response);
+
+          if (response.status === 200) {
+            mdui.snackbar({ message: 'Message sent', closeable: true });
+          } else {
+            mdui.snackbar({
+              message: 'Failed to send message. Check console for more info',
+              closeable: true,
+            });
+          }
+        });
+      });
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <script src="/assets/js/index.js"></script>
+  </head>
+  <body>
+    <mdui-top-app-bar>
+      <mdui-button-icon id="menu" icon="menu"></mdui-button-icon>
+      <mdui-top-app-bar-title>
+        <a href="/" class="mdui-title">IABot WebUI</a>
+      </mdui-top-app-bar-title>
+      <div style="flex-grow: 1">
+        <mdui-button icon="open_in_new" href="https://i14a.pages.dev" target="_blank">
+          i14a.pages.dev
+        </mdui-button>
+        <mdui-button-icon icon="more_vert" id="more"></mdui-button-icon>
+      </div>
+    </mdui-top-app-bar>
+    <mdui-navigation-drawer open="false" id="drawer" close-on-esc close-on-overlay-click modal>
+      <h1>IABot WebUI</h1>
+      <mdui-list>
+        <mdui-list-item id="force_dark">Darkmode</mdui-list-item>
+        <mdui-list-item id="force_light">Lightmode</mdui-list-item>
+        <mdui-list-item id="force_system">Sync System Theme</mdui-list-item>
+      </mdui-list>
+      <p>
+        <a href="https://i14a.pages.dev/tos" target="_blank" rel="noopener noreferrer"
+          >利用規約・プライバシーポリシー
+        </a>
+      </p>
+    </mdui-navigation-drawer>
+    <mdui-navigation-drawer
+      open="false"
+      id="right_drawer"
+      placement="right"
+      modal
+      close-on-esc
+      close-on-overlay-click
+      modal
+    >
+      <span class="css-right-drawer-content">
+        <mdui-button raised style="margin-top: 2.5rem" id="restart">Restart</mdui-button>
+        <mdui-button
+          raised
+          style="margin-top: 2.5rem"
+          href="/chat"
+          target="_blank"
+          icon="open_in_new"
+        >
+          local-chat-app
+        </mdui-button>
+      </span>
+    </mdui-navigation-drawer>
+
+    <mdui-layout>
+      <mdui-layout-main>
+        <mdui-list>
+          <mdui-collapse accordion>
+            <mdui-collapse-item>
+              <mdui-list-item slot="header" icon="near_me">Send message</mdui-list-item>
+              <div style="margin-left: 2.5rem">
+                <p>Channel ID</p>
+                <mdui-text-field type="text" label="Channel ID" id="channel_id"></mdui-text-field>
+                <p>Message</p>
+                <mdui-text-field type="text" label="Message" id="message"></mdui-text-field>
+                <mdui-button raised style="margin-top: 2.5rem" id="message_send">Send</mdui-button>
+              </div>
+            </mdui-collapse-item>
+            <mdui-collapse-item>
+              <mdui-list-item slot="header" icon="near_me">Item 2</mdui-list-item>
+              <div style="margin-left: 2.5rem">
+                <mdui-list-item>Item 2 - subitem</mdui-list-item>
+              </div>
+            </mdui-collapse-item>
+          </mdui-collapse>
+        </mdui-list>
+      </mdui-layout-main>
+    </mdui-layout>
+  </body>
+</html>

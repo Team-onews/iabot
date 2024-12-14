@@ -41,5 +41,8 @@ export const command: Command = {
       ].join('\n'),
       ephemeral: true,
     });
+    await interaction.client.application.commands.cache
+      .get(interaction.commandId)
+      ?.edit(getCommandData());
   },
 };

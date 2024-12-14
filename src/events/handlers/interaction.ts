@@ -45,9 +45,9 @@ export async function interaction(interaction: Interaction, client: Client) {
   if (interaction.isAutocomplete()) {
     if (interaction.commandName === 'error_types') {
       const { options } = interaction;
-      let value = options.get('error_type')?.value as string;
+      let value = options.get('error_type', true).value as string;
       value = value.toLowerCase();
-      if (!value) {
+      if (!value || value.length == 0) {
         await interaction.respond([
           {
             name: '何らかの文字を入力して検索を開始できます。',
@@ -76,9 +76,9 @@ export async function interaction(interaction: Interaction, client: Client) {
     }
     if (interaction.commandName === 'gacha_character') {
       const { options } = interaction;
-      let value = options.get('character')?.value as string;
+      let value = options.get('character', true).value as string;
       value = value.toLowerCase();
-      if (!value) {
+      if (!value || value.length == 0) {
         await interaction.respond([
           {
             name: '何らかの文字を入力して検索を開始できます。',
@@ -113,9 +113,9 @@ export async function interaction(interaction: Interaction, client: Client) {
     }
     if (interaction.commandName === 'gacha_item' || interaction.commandName === 'gacha_give') {
       const { options } = interaction;
-      let value = options.get('item')?.value as string;
+      let value = options.get('item', true).value as string;
       value = value.toLowerCase();
-      if (!value) {
+      if (!value || value.length == 0) {
         await interaction.respond([
           {
             name: '何らかの文字を入力して検索を開始できます。',

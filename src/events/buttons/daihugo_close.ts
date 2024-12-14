@@ -25,6 +25,7 @@ export const Button: ButtonInteraction = {
       embeds: [
         {
           title: '大富豪のルーム名とURL',
+          color: 0x00ff00,
           fields: [
             {
               name: 'URL',

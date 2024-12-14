@@ -18,9 +18,10 @@ export const Command: messageCommand = {
         },
         body: args.slice(1).join(' '),
       });
-      await reply.edit(`### 変換しました:\n${await result.text()}`);
+      await reply.edit(await result.text());
     } catch (error) {
-      await reply.edit(`### 変換に失敗しました:\n${error}`);
+      console.error(error);
+      await reply.edit(`### 変換に失敗しました。`);
     }
   },
 };

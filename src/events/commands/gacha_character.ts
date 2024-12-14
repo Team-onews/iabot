@@ -44,17 +44,10 @@ export const command: Command = {
   },
   run: async interaction => {
     const { options } = interaction;
-    const ephemeral = options.getBoolean('ephemeral') ? false : true;
-    const char = options.get('character');
-    if (!char || char.value === 'null' || !char.value || !(typeof char.value === 'string')) {
-      await interaction.reply({
-        ephemeral: true,
-        content: '[ERR_NO_SPECIFIED_ITEM_TYPE] Please specify an item.',
-      });
-      return;
-    }
+    const ephemeral = Boolean('ephemeral') ? false : true;
+    const char = options.getString('character', true);
 
-    const _character = await getGachaItem(char.value, 'character');
+    const _character = await getGachaItem(char, 'character');
     if (!_character) {
       await interaction.reply({
         ephemeral: true,

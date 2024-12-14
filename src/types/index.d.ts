@@ -37,15 +37,30 @@ export interface GachaItem {
   weight: number;
   count?: number;
   hidden?: boolean;
-  game: 'starrail' | 'genshin' | 'minecraft' | 'sol' | 'othello' | 'other' | 'fortnite';
+  game:
+    | 'starrail'
+    | 'genshin'
+    | 'minecraft'
+    | 'sol'
+    | 'othello'
+    | 'other'
+    | 'fortnite'
+    | 'zenless'
+    | 'gakumasu'
+    | 'mementomori';
   type: 'item' | 'character';
   rarity:
-    | { type: 'ys'; rarity: 5 | 4 | 3 | 2 | 1 }
+    | { type: 'ys'; rarity: 7 | 6 | 5 | 4 | 3 | 2 | 1 }
     | { type: 'fn'; rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'mythic' }
     | { type: 'mc'; rarity: 'common' | 'uncommon' | 'rare' | 'epic' }
     | { type: 'sol'; rarity: string }
     | { type: 'othello'; rarity: 'C' | 'B' | 'A' | 'A+' | 'S' | 'S+' }
-    | { type: 'other'; rarity: string };
+    | { type: 'gakumasu'; rarity: 'R' | 'SR' | 'SSR' }
+    | {
+        type: 'mementomori';
+        rarity: 'N' | 'R' | 'SR' | 'SR+' | 'SSR' | 'SSR+' | 'UR' | 'UR' | 'LR';
+      }
+    | { type: 'other'; rarity: string | number };
 }
 
 export interface SlashCommandData {
@@ -61,17 +76,17 @@ export interface SlashCommandData {
 }
 
 export interface ButtonInteraction {
-  run: (interaction: ButtonInteraction, client: I14AClient) => Promise<void>;
+  run: (interaction: ButtonInteraction, client: I14AClient) => Promise<any>;
 }
 
 export interface Command {
   data: APIApplicationCommand;
-  run: (interaction: ChatInputCommandInteraction, client: I14AClient) => Promise<void>;
+  run: (interaction: ChatInputCommandInteraction, client: I14AClient) => Promise<any>;
 }
 
 export interface messageCommand {
   name?: string;
-  run: (message: Message, args: string[], client: I14AClient) => Promise<void>;
+  run: (message: Message, args: string[], client: I14AClient) => Promise<any>;
 }
 
 export interface Embed extends Embed {
@@ -178,3 +193,12 @@ export interface APIApplicationCommand {
    */
   version?: Snowflake;
 }
+
+
+export type LocalMessage = {
+  username: string;
+  message: string;
+  createdAt: number;
+  id: string;
+  isPinned?: boolean;
+};

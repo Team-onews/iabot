@@ -110,7 +110,7 @@ export const errors: { [key in (typeof strings)[number]]?: types } = {
   },
   NoEmbeds: {
     name: 'NoEmbeds',
-    description: '埋め込みがありません。',
+    description: '指定されたメッセージに必要な情報が付属している埋め込みがありません。',
     id: IDs['NoEmbeds'],
     priority: 5,
   },

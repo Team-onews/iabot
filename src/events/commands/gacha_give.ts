@@ -53,20 +53,13 @@ export const command: Command = {
       await interaction.reply("**Hey!** Sorry, but you don't have required permission.");
       return;
     }
-    const item = options.getString('item');
-    const user = options.getUser('user');
+    const item = options.getString('item', true);
+    const user = options.getUser('user', true);
     const count = options.getInteger('count');
-    if (!user || user.bot || user.system) {
+    if (user.bot || user.system) {
       await interaction.reply({
         ephemeral: true,
         content: '[ERR_NO_SPECIFIED_USER] 有効なユーザーを選択してください',
-      });
-      return;
-    }
-    if (!item || item === 'null' || !(typeof item === 'string')) {
-      await interaction.reply({
-        ephemeral: true,
-        content: '[ERR_NO_SPECIFIED_ITEM_TYPE] アイテムを選択してください',
       });
       return;
     }

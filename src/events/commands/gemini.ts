@@ -60,8 +60,8 @@ export const command: Command = {
   run: async (interaction, client) => {
     if (!client.user) return;
 
-    const prompt = interaction.options.getString('prompt') as string;
-    const proxy = interaction.options.getBoolean('proxy');
+    const prompt = interaction.options.getString('prompt', true);
+    const proxy = interaction.options.getBoolean('proxy') ?? false;
     const ephemeral = interaction.options.getBoolean('ephemeral') ?? false;
 
     const ngWord = [
@@ -93,6 +93,7 @@ export const command: Command = {
       await interaction.reply({
         embeds: [
           {
+            color: 0xff0000,
             description: '**ERROR** Internal error',
           },
         ],
@@ -104,6 +105,7 @@ export const command: Command = {
     await interaction.reply({
       embeds: [
         {
+          color: 0x2f3136,
           description: 'APIの応答を待っています...',
         },
       ],
@@ -125,6 +127,7 @@ export const command: Command = {
         await interaction.editReply({
           embeds: [
             {
+              color: 0xff0000,
               description:
                 '生成中にエラーが発生しました:\n規制されたコンテンツが含まれるため、結果を出力できません。',
             },
@@ -140,6 +143,7 @@ export const command: Command = {
       await interaction.editReply({
         embeds: [
           {
+            color: 0x2f3136,
             description: escapeDiscordMarkdown(result),
           },
         ],
@@ -149,6 +153,7 @@ export const command: Command = {
       await interaction.editReply({
         embeds: [
           {
+            color: 0xff0000,
             description: 'どうやらエラーが発生したみたい',
           },
         ],

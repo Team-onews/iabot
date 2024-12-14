@@ -1,0 +1,130 @@
+@media (prefers-color-scheme: dark) {
+  html {
+    font-family: 'gg sans Regular', sans-serif;
+    background-color: #202020;
+  }
+  body {
+    color: #fff;
+  }
+  a {
+    color: #8bc34a;
+  }
+  a:hover {
+    color: #64b5f6;
+  }
+  .mdui-textfield-input {
+    background-color: #333;
+    border-color: #333;
+    color: #fff;
+  }
+  .mdui-textfield-label {
+    color: #fff;
+  }
+  .mdui-btn {
+    background-color: #333;
+    color: #fff;
+  }
+  .mdui-btn:hover {
+    background-color: #444;
+  }
+
+  .css-s1msg {
+    display: flex;
+    align-items: center;
+    padding-top: 10px;
+  }
+
+  .css-l1m1 {
+    font-weight: bold;
+    font-size: 1.1em;
+  }
+
+  .css-l1m2 {
+    color: gray;
+    font-size: 0.8em;
+    margin-left: 10px;
+  }
+
+  .css-l2m1 {
+    margin-top: 5px;
+    font-size: 0.9em;
+    word-break: break-all;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+  }
+  .popup-text {
+    background: black;
+    color: white;
+    margin-bottom: 10px;
+  }
+
+  .username-popup {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+  }
+
+  .error {
+    background-color: #f44336;
+    color: white;
+    padding: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #username {
+    cursor: default;
+    background-color: #f1f1f1;
+  }
+
+  #message,
+  #username,
+  #message-send {
+    box-sizing: border-box;
+    padding: 6px;
+    border-radius: 8px;
+  }
+  #message-send {
+    border-radius: 16px;
+  }
+}
+.username-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.username-popup > * {
+  background-color: white;
+  padding: 10px;
+  border-radius: 10px;
+}
+.message-actions {
+  display: flex;
+  gap: 5px;
+  margin-left: auto;
+}
+.message-actions img {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+a {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}
+#messageInput {
+  -webkit-appearance: none;
+  appearance: none;
+}

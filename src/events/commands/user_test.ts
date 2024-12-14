@@ -66,7 +66,7 @@ export const command: Command = {
   },
   run: async interaction => {
     const { options } = interaction;
-    const input = options.getString('language') as string;
+    const input = options.getString('language', true);
     const ephemeral = options.getBoolean('ephemeral') ? false : true;
     const helloworld: Record<string, string> = {
       ja: 'こんにちは、世界！',

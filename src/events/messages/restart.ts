@@ -5,18 +5,14 @@ import { checkPerms } from '../../utils/utilities.js';
 
 /* main */
 export const Command: messageCommand = {
-  async run(message, args, client) {
+  async run(message) {
     const {
       author: { username, id },
     } = message;
-    if (await checkPerms(username, id, 'admin')) {
-      await message.reply('再起動しています...');
-      await message.delete().catch(console.log);
-      restart();
-    } else {
-      message.reply("**Hey!** Sorry, but you don't have required permission.");
-      await client.log('No permission', 'perm', 'permissionError');
-      return;
-    }
+    if (!(await checkPerms(username, id, 'admin')))
+      return message.reply("**Hey!** Sorry, but you don't have required permission.");
+    message.reply('再起動しています...');
+    await message.delete().catch(console.log);
+    restart();
   },
 };

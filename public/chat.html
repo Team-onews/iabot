@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preload" href="/assets/img/copy.svg" as="image" />
+    <link rel="preload" href="/assets/img/pin.svg" as="image" />
+    <link rel="preload" href="/assets/img/delete.svg" as="image" />
+    <title>Chat</title>
+    <link rel="stylesheet" href="/assets/css/chat.css" />
+    <link rel="stylesheet" href="/assets/font/ggsans/style.css" />
+  </head>
+  <body>
+    <script>
+      document.addEventListener('DOMContentLoaded', async () => {
+        const messageList = document.getElementById('message-list');
+        const messageForm = document.getElementById('message-form');
+        const messageInput = document.getElementById('message');
+        const usernameInput = document.getElementById('username');
+
+        let lastMessageId = 0;
+        const displayedMessageIds = new Set();
+
+        function setUsername() {
+          const popup = document.createElement('div');
+          popup.className = 'username-popup';
+          popup.innerHTML = `
+        <p class="popup-text">Enter your username:</p>
+        <input type="text" id="username-input" value="${localStorage.getItem('username') || ''}" />
+        <button id="username-save">Save</button>
+      `;
+          document.body.appendChild(popup);
+          const saveButton = document.getElementById('username-save');
+          saveButton.addEventListener('click', () => {
+            const username = document.getElementById('username-input').value;
+            localStorage.setItem('username', username);
+            document.getElementById('username').value = username;
+            popup.remove();
+          });
+        }
+
+        const savedUsername = localStorage.getItem('username');
+        if (savedUsername) {
+          document.getElementById('username').value = savedUsername;
+        }
+
+        document.getElementById('username').addEventListener('click', setUsername);
+
+        async function updateMessages() {
+          const messagesResponse = await fetch('/api/messages');
+          if (messagesResponse.status !== 200) return;
+          const messages = (await messagesResponse.json()).messages;
+          if (!Array.isArray(messages)) return;
+          messages.forEach(message => {
+            if (displayedMessageIds.has(message.id)) return;
+            const li = document.createElement('li');
+            const messageContent = message.message.replace(
+              /((?:https?|ftp|smb|minecraft):\/\/[^\s]+)/g,
+              '<a href="$1" target="_blank">$1</a>'
+            );
+            li.innerHTML = `
+            <div class="css-s1msg">
+              <div>
+                <strong data-type="username" class="css-l1m1">${message.username}</strong>
+                <span data-type="date" class="css-l1m2">${new Date(message.createdAt).toLocaleString()}</span>
+                <div class="css-l2m1" data-type="message" data-message-id="${message.id}">${messageContent}</div>
+              </div>
+              <div class="message-actions">
+                <img src="/assets/img/copy.svg" alt="Copy" />
+                <img src="/assets/img/pin.svg" alt="Pin" />
+                <img src="/assets/img/delete.svg" alt="Delete" />
+              </div>
+            </div>
+          `;
+            messageList.appendChild(li);
+            displayedMessageIds.add(message.id);
+            lastMessageId = message.id;
+          });
+          messageList.scrollTop = messageList.scrollHeight;
+        }
+
+        messageList.addEventListener('click', e => {
+          if (e.target.tagName === 'IMG') {
+            const target = e.target;
+            if (!target) {
+              throw new Error('no target');
+            }
+            const elm = target.closest('li').querySelector('[data-type="message"]');
+            const messageId = elm.dataset.messageId;
+            if (e.target.alt === 'Copy') {
+              navigator.clipboard.writeText(elm.textContent);
+            } else if (e.target.alt === 'Delete') {
+              fetch(`/api/messages/${messageId}`, { method: 'DELETE' });
+              displayedMessageIds.delete(parseInt(messageId));
+              elm.querySelector(`[data-message-id="${messageId}"]`).parentElement.remove();
+            } else if (e.target.alt === 'Pin') {
+              fetch(`/api/messages/${messageId}/pin`, { method: 'POST' });
+            }
+          }
+        });
+
+        updateMessages();
+
+        async function sendMessageErrorHandle(e) {
+          const errorElement = document.createElement('div');
+          errorElement.className = 'error';
+          errorElement.innerHTML = `
+            <p>Failed to send message. ${error.message}</p>
+            <button id="error-reload">Reload</button>
+          `;
+          messageList.parentElement.insertBefore(errorElement, messageList);
+          const reloadButton = document.getElementById('error-reload');
+          reloadButton.addEventListener('click', () => {
+            location.reload();
+          });
+        }
+        async function sendMessageFailHandle(res) {
+          if (res.status !== 200) {
+            const error = await res.json();
+            const errorElement = document.createElement('div');
+            errorElement.className = 'error';
+            errorElement.innerHTML = `
+            <p>Failed to send message. ${error.message}</p>
+            <button id="error-reload">Reload</button>
+          `;
+            messageList.parentElement.insertBefore(errorElement, messageList);
+            const reloadButton = document.getElementById('error-reload');
+            reloadButton.addEventListener('click', () => {
+              location.reload();
+            });
+            return;
+          }
+        }
+        messageForm.addEventListener('submit', async e => {
+          e.preventDefault();
+          const message = messageInput.value;
+          const username = usernameInput.value;
+          if (message.length <= 0 || username.length <= 0) return;
+          messageInput.disabled = true;
+          usernameInput.disabled = true;
+          try {
+            const res = await fetch('/api/messages', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ message, username }),
+            });
+            messageInput.disabled = false;
+            usernameInput.disabled = false;
+            if (res.status !== 200) {
+              return sendMessageFailHandle(res);
+            }
+            messageInput.value = '';
+            updateMessages();
+          } catch (e) {
+            sendMessageErrorHandle(e);
+          }
+        });
+
+        setInterval(updateMessages, 1000);
+      });
+    </script>
+
+    <ul id="message-list" style="list-style: none; padding: 0; height: 400px; overflow: auto"></ul>
+    <form id="message-form" style="display: flex">
+      <input
+        id="username"
+        type="text"
+        placeholder="Username"
+        maxlength="32"
+        minlength="1"
+        style="width: 20%"
+        readonly
+      />
+      <input
+        id="message"
+        type="text"
+        placeholder="Message"
+        maxlength="10000"
+        autocomplete="off"
+        minlength="1"
+        inputmode="text"
+        style="width: 100%"
+      />
+      <button id="message-send">Send</button>
+    </form>
+  </body>
+</html>

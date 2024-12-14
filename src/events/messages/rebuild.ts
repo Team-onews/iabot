@@ -5,7 +5,7 @@ import { restart } from '../../utils/restart.js';
 
 export const Command: messageCommand = {
   async run(message) {
-    const reply = await message.reply('<a:loading:1271076741749936179> Rebuilding...');
+    const reply = await message.reply('rebuilding...');
     await message.delete().catch(client.error);
 
     try {

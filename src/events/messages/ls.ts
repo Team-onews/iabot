@@ -5,7 +5,7 @@ import { messageCommand } from '../../types/index.js';
 export const Command: messageCommand = {
   async run(message) {
     message.reply(
-      ['All commands:', `\`\`\`${JSON.stringify(await getAllCommands())}\`\`\``].join('\n')
+      ['List of commands', `\`\`\`${JSON.stringify(await getAllCommands())}\`\`\``].join('\n')
     );
   },
 };

@@ -23,11 +23,12 @@ export class Client extends Discord {
   slashCommands = new Collection<string, Command>();
   textCommands = new Collection<string, messageCommand>();
   buttons = new Collection<string, any>();
+  otp: string = generateOneTimePassword(6);
   /* @ts-ignore */
   user!: ClientUser;
 
   constructor() {
-    super({ intents: [getIntents()] });
+    super({ intents: [getIntents()], allowedMentions: { parse: ['users'] } });
     /* @ts-ignore */
     WebSocketOptions.identifyProperties.browser = 'Discord Android';
   }
@@ -40,6 +41,7 @@ export class Client extends Discord {
       './db/characters',
       './db/inventory',
       './db/json',
+      './db/webui',
       './logs',
       './logs/errors',
       './logs/errors/silent',
@@ -127,14 +129,9 @@ export class Client extends Discord {
   }
 
   private async _safeExit() {
-    ['SIGINT', 'SIGTERM', 'SIGKILL', 'exit', 'SIGSTOP'].forEach(sig => {
+    ['SIGINT', 'SIGTERM', 'SIGKILL', 'exit', 'SIGSTOP', 'uncaughtException'].forEach(sig => {
       process.on(sig, () => {
-        if (this.user) {
-          this.destroy();
-          try {
-            process.kill(0);
-          } catch {}
-        }
+        this.stop();
         try {
           process.kill(1);
         } catch {}
@@ -148,6 +145,17 @@ export class Client extends Discord {
     }
     await this._getCommands();
     await this._applyCommand();
+  }
+
+  public async stop(errorCode?: number) {
+    await super.destroy();
+    if (!this.user)
+      try {
+        process.exit(errorCode ?? 1);
+      } catch {}
+    try {
+      process.exit(errorCode ?? 0);
+    } catch {}
   }
 
   public async error(e: any) {
@@ -197,13 +205,28 @@ export async function log(message: any, level?: string, logfile?: string) {
   const now = new Date().toLocaleString();
   const milliseconds = new Date().getMilliseconds();
   const output = `[ ${now}:${milliseconds} ] [ ${level ?? 'info'} ] ${message}\n`;
+
   if (level === 'error') {
     console.error(message);
-  } else console.log(`[update] ${level ?? 'info'}::${now}`);
-  if (!fs.existsSync('./logs')) fs.mkdirSync('./logs');
+  } else {
+    console.log(`[update] ${level ?? 'info'}::${now}`);
+  }
+
+  const dir = fn.substring(0, fn.lastIndexOf('/'));
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+
   if (!fs.existsSync(fn)) {
     fs.writeFileSync(fn, output, 'utf8');
-    return;
+  } else {
+    fs.appendFileSync(fn, output, 'utf8');
   }
-  fs.appendFileSync(fn, output, 'utf8');
 }
+
+const generateOneTimePassword = (length: number) => {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  return Array.from({ length }, () =>
+    characters.charAt(Math.floor(Math.random() * characters.length))
+  ).join('');
+};

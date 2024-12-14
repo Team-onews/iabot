@@ -9,5 +9,7 @@
       "label": "npm: build",
       "detail": "rm -rf dist && tsc"
     }
-  ]
+  ],
+  "html.customData": ["./node_modules/mdui/html-data.en.json"],
+  "css.customData": ["./node_modules/mdui/css-data.en.json"]
 }
